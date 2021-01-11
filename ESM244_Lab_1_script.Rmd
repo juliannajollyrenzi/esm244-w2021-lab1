@@ -1,0 +1,49 @@
+---
+title: "ESM 244: Lab 1"
+author: "Julianna Renzi"
+date: "1/10/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(here) # really nice paths to read in files
+library(sf) # spatial data wrangling
+library(tmap) # interactive map
+
+```
+
+### Read in San Francisco trees data
+
+```{r}
+
+sf_trees <- read_csv(here("data", "sf_trees", "sf_trees.csv")) # gives relative file path from project root
+
+```
+
+### Basic wrangling reminders
+
+Refresh some skills for data wrangling and summary stats using functions in the 'dplyr' package. Note can use Help -> Cheatsheets for more foramtting options.
+
+Find the top 5 highest observations of trees by legal_status. Then do some wrangling and make a graph.
+
+```{r}
+top_5_status <- sf_trees %>% 
+  count(legal_status) %>% 
+  drop_na(legal_status) %>% # drop NAs where legal_status is NA
+  rename(tree_count = n) %>% # new name on left
+  relocate(tree_count) # to re-order (e.g. by number/characters, or in this case move one to the front)
+
+# count trees observed by legal status
+# press enter after each pipe operator
+# count() counts observations by groups (recognizes groups, finds counts, and puts it in a table--group_by, summarize n() all in one!)
+
+sf_trees %>% 
+  count(legal_status, species) # can do multiple for example
+
+
+```
+
+
