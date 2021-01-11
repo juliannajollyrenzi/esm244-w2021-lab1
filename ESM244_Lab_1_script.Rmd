@@ -34,7 +34,8 @@ top_5_status <- sf_trees %>%
   count(legal_status) %>% 
   drop_na(legal_status) %>% # drop NAs where legal_status is NA
   rename(tree_count = n) %>% # new name on left
-  relocate(tree_count) # to re-order (e.g. by number/characters, or in this case move one to the front)
+  relocate(tree_count) %>% # to re-order (e.g. by number/characters, or in this case move one to the front)
+  slice_max(tree_count, n = 5) # allows you to get max values of a variable and keep those above a threshold (i.e. top 5 in this case)
 
 # count trees observed by legal status
 # press enter after each pipe operator
@@ -44,6 +45,53 @@ sf_trees %>%
   count(legal_status, species) # can do multiple for example
 
 
+```
+
+Make a graph of those top 5 observations by legal status
+
+```{r}
+
+ggplot(data = top_5_status, aes(x = fct_reorder(legal_status, tree_count), y = tree_count)) + 
+  geom_col() + # column graph (default is alphabetical so sort)
+  # convert to factor and reorder based on tree count
+  labs(x = "Legal Status", y = "Tree Count") + 
+  coord_flip() + # flip axes for better text
+  theme_minimal()
+
+```
+
+### A few more data wrangling refresher examples
+
+Only want to keep observations (rows) for Blackwood Acacia trees
+
+```{r}
+blackwood_acacia <- sf_trees %>% 
+  filter(str_detect(species, "Blackwood Acacia")) %>% # keep all observations where the string is detected anywhere in the cell (look in sf_trees, keep in spp variables the string "Blackwood Acacia" is detected)
+  select(legal_status, date, latitude, longitude) # clean it up and remove columns 
+
+# map it!
+ggplot(data = blackwood_acacia, aes(x = longitude, y = latitude)) +
+  geom_point()
+
+```
+
+### tidyr::separate() and unite() functions
+
+Useful for combining or separating columns
+
+```{r}
+# split by colon
+sf_trees_sep <- sf_trees %>% 
+  separate(species, into = c("spp_scientific", "spp_common"), sep = "::") 
+
+```
+
+Example: tidyr::unite()
+
+```{r}
+# combine columns and separator
+sf_trees_unite <- sf_trees %>% 
+  unite("id_status", tree_id:legal_status, sep = "_cool_") # unite a series of columns with a common separator and call it id_status
 ```
 
 
