@@ -136,7 +136,19 @@ Combine blackwood acacia observations and SF roads
 ```{r}
 ggplot() +
   geom_sf(data = sf_map, size = 0.1, color = "darkgray") +
-  theme_minimal() + 
- geom_sf(data = blackwood_acacia_sp, color = "red", size = 0.5)
+  theme_void() + 
+ geom_sf(data = blackwood_acacia_sp, color = "red", size = 0.5) 
+```
+
+Now create an interactive map
+
+```{r}
+tmap_mode("view") # default is plot (static)--want it to be interactive!
+
+# create the tm object
+tm_shape(blackwood_acacia_sp) + # needs a crs specified
+  tm_dots() # shape
+# WOAH!!!
+  
 ```
 
