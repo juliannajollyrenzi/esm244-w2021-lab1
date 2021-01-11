@@ -38,7 +38,7 @@ top_5_status <- sf_trees %>%
 
 # count trees observed by legal status
 # press enter after each pipe operator
-# count() counts observations by groups (recognizes groups, finds counts, and puts it in a table--group_by, summarize n() all in one!)
+# count() counts observations by groups (recognizes groups, finds counts, and puts it in a table--group_by, summarize n() all in one!) 
 
 sf_trees %>% 
   count(legal_status, species) # can do multiple for example
