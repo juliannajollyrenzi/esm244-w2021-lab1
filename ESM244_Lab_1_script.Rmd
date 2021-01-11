@@ -94,4 +94,49 @@ sf_trees_unite <- sf_trees %>%
   unite("id_status", tree_id:legal_status, sep = "_cool_") # unite a series of columns with a common separator and call it id_status
 ```
 
+## Make actual maps
+
+'st_as_sf()' to convert lat & long to spatial coordinates
+
+```{r}
+# convert to spatial points
+blackwood_acacia_sp <- blackwood_acacia %>% 
+  drop_na(longitude, latitude) %>% # remove any na's for lat and long
+  st_as_sf(coords = c("longitude", "latitude")) # what are the variables storing long/lat -- order MATTERS (put lon then lat variables)
+  # now have a geometry column--can wrangle columns but geometry will stay with rows until we tell it not to ('sticky')
+
+# assign coordinate system
+st_crs(blackwood_acacia_sp) = 4326 # European Petroleum Survey group code for coordinate references
+
+# now can plot spatial data
+ggplot(data = blackwood_acacia_sp) + 
+  geom_sf(color = "darkgreen") + 
+  theme_minimal() # but hard to interpret without san francisco shape file
+
+```
+
+Read in SF roads shapefile:
+
+```{r}
+sf_map <- read_sf(here("data", "sf_map", "tl_2017_06075_roads.shp"))
+
+# check
+st_transform(sf_map) # has bounding box (bbox), etc. -- want them to be in the same Coordinate Reference System (CRS)--there is an existing crs here!
+
+# transform it so it's on the same crs
+st_transform(sf_map, 4326)
+
+ggplot(data = sf_map) +
+  geom_sf(size = .1) # San Francisco roads
+
+```
+
+Combine blackwood acacia observations and SF roads
+
+```{r}
+ggplot() +
+  geom_sf(data = sf_map, size = 0.1, color = "darkgray") +
+  theme_minimal() + 
+ geom_sf(data = blackwood_acacia_sp, color = "red", size = 0.5)
+```
 
